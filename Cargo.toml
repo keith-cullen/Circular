@@ -1,0 +1,11 @@
+[package]
+name = "circular"
+version = "0.0.1"
+authors = ["Keith Cullen <keithcullen77@gmail.com>"]
+edition = "2018"
+description = "Queue implemented using a contiguous buffer with separate indices for reading and writing."
+license = "BSD-3-Clause"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
