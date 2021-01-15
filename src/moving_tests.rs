@@ -1,4 +1,7 @@
 use super::moving::*;
+use std::sync::Arc;
+use std::sync::Mutex;
+use std::thread;
 
 #[test]
 fn new() {
@@ -632,4 +635,37 @@ fn start_mid_write_read_larger_buffer() {
         assert_eq!(cb.count(), 0);
         assert_eq!(v, e);
     }
+}
+
+#[test]
+fn start_multi_threaded() {
+    let sender = Arc::new(Mutex::new(Buffer::<u8>::new(8)));
+    let receiver = Arc::clone(&sender);
+    let mut push1 = Some(1);
+    let ret1 = sender.lock().unwrap().push(&mut push1);
+    assert_eq!(ret1, true);
+    match push1 {
+        Some(_) => panic!(),
+        None => ()
+    }
+    let mut push2 = Some(2);
+    let ret2 = sender.lock().unwrap().push(&mut push2);
+    assert_eq!(ret2, true);
+    match push1 {
+        Some(_) => panic!(),
+        None => ()
+    }
+    let thread_handle = thread::spawn(move || {
+        let pop1 = receiver.lock().unwrap().pop();
+        match pop1 {
+           Some(v) => assert_eq!(v, 1),
+           _ => panic!()
+        }
+        let pop2 = receiver.lock().unwrap().pop();
+        match pop2 {
+           Some(v) => assert_eq!(v, 2),
+           _ => panic!()
+        }
+    });
+    thread_handle.join().unwrap();
 }

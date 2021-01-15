@@ -1,4 +1,7 @@
 use super::copying::*;
+use std::sync::Arc;
+use std::sync::Mutex;
+use std::thread;
 
 #[test]
 fn new() {
@@ -882,4 +885,27 @@ fn start_mid_write_peek_consume_larger_buffer() {
         assert_eq!(cb.count(), 0);
         assert_eq!(vc, ec);
     }
+}
+
+#[test]
+fn start_multi_threaded() {
+    let sender = Arc::new(Mutex::new(Buffer::<u8>::new(8)));
+    let receiver = Arc::clone(&sender);
+    let ret1 = sender.lock().unwrap().push(1);
+    assert_eq!(ret1, true);
+    let ret2 = sender.lock().unwrap().push(2);
+    assert_eq!(ret2, true);
+    let thread_handle = thread::spawn(move || {
+        let pop1 = receiver.lock().unwrap().pop();
+        match pop1 {
+           Some(v) => assert_eq!(v, 1),
+           _ => panic!()
+        }
+        let pop2 = receiver.lock().unwrap().pop();
+        match pop2 {
+           Some(v) => assert_eq!(v, 2),
+           _ => panic!()
+        }
+    });
+    thread_handle.join().unwrap();
 }
