@@ -1,3 +1,10 @@
+// +--------------------------+
+// |                          |
+// |    Copyright (c) 2020    |
+// |       Keith Cullen       |
+// |                          |
+// +--------------------------+
+
 use super::copying::*;
 use std::sync::Arc;
 use std::sync::Mutex;
@@ -5,24 +12,24 @@ use std::thread;
 
 #[test]
 fn new() {
-    Buffer::<u8>::new(16);
+    CircBuf::<u8>::new(16);
 }
 
 #[test]
 #[should_panic]
 fn new_with_len_too_small() {
-    Buffer::<u8>::new(1);
+    CircBuf::<u8>::new(1);
 }
 
 #[test]
 #[should_panic]
 fn new_with_len_not_power_of_two() {
-    Buffer::<u8>::new(3);
+    CircBuf::<u8>::new(3);
 }
 
 #[test]
 fn push_pop() {
-    let mut cb = Buffer::<u8>::new(8);
+    let mut cb = CircBuf::<u8>::new(8);
 
     // push 5 elements
 
@@ -289,7 +296,7 @@ fn push_pop() {
 
 #[test]
 fn write_read_smaller_buffer() {
-    let mut cb = Buffer::<u8>::new(8);
+    let mut cb = CircBuf::<u8>::new(8);
     // write with sufficient space available
     {
         let v: [u8; 4] = [1, 2, 3, 4];
@@ -338,7 +345,7 @@ fn write_read_smaller_buffer() {
 
 #[test]
 fn write_read_larger_buffer() {
-    let mut cb = Buffer::<u8>::new(8);
+    let mut cb = CircBuf::<u8>::new(8);
     // write with insufficient space available
     {
         let v: [u8; 12] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -387,7 +394,7 @@ fn write_read_larger_buffer() {
 
 #[test]
 fn start_mid_write_read_smaller_buffer() {
-    let mut cb = Buffer::<u8>::new(8);
+    let mut cb = CircBuf::<u8>::new(8);
     // move head and tail to mid way
     {
         let mut v: [u8; 4] = [0, 0, 0, 0];
@@ -452,7 +459,7 @@ fn start_mid_write_read_smaller_buffer() {
 
 #[test]
 fn start_mid_write_read_larger_buffer() {
-    let mut cb = Buffer::<u8>::new(8);
+    let mut cb = CircBuf::<u8>::new(8);
     // move head and tail to mid way
     {
         let mut v: [u8; 4] = [0, 0, 0, 0];
@@ -517,7 +524,7 @@ fn start_mid_write_read_larger_buffer() {
 
 #[test]
 fn write_peek_consume_smaller_buffer() {
-    let mut cb = Buffer::<u8>::new(8);
+    let mut cb = CircBuf::<u8>::new(8);
     // write with sufficient space available
     {
         let v: [u8; 4] = [1, 2, 3, 4];
@@ -602,7 +609,7 @@ fn write_peek_consume_smaller_buffer() {
 
 #[test]
 fn write_peek_consume_larger_buffer() {
-    let mut cb = Buffer::<u8>::new(8);
+    let mut cb = CircBuf::<u8>::new(8);
     // write with insufficient space available
     {
         let v: [u8; 12] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -687,7 +694,7 @@ fn write_peek_consume_larger_buffer() {
 
 #[test]
 fn start_mid_write_peek_consume_smaller_buffer() {
-    let mut cb = Buffer::<u8>::new(8);
+    let mut cb = CircBuf::<u8>::new(8);
     // move head and tail to mid way
     {
         let mut v: [u8; 4] = [0, 0, 0, 0];
@@ -788,7 +795,7 @@ fn start_mid_write_peek_consume_smaller_buffer() {
 
 #[test]
 fn start_mid_write_peek_consume_larger_buffer() {
-    let mut cb = Buffer::<u8>::new(8);
+    let mut cb = CircBuf::<u8>::new(8);
     // move head and tail to mid way
     {
         let mut v: [u8; 4] = [0, 0, 0, 0];
@@ -889,7 +896,7 @@ fn start_mid_write_peek_consume_larger_buffer() {
 
 #[test]
 fn start_multi_threaded() {
-    let sender = Arc::new(Mutex::new(Buffer::<u8>::new(8)));
+    let sender = Arc::new(Mutex::new(CircBuf::<u8>::new(8)));
     let receiver = Arc::clone(&sender);
     let ret1 = sender.lock().unwrap().push(1);
     assert_eq!(ret1, true);

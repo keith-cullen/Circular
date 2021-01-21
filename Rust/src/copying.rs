@@ -1,3 +1,10 @@
+// +--------------------------+
+// |                          |
+// |    Copyright (c) 2020    |
+// |       Keith Cullen       |
+// |                          |
+// +--------------------------+
+
 ///  A queue implemented using a contiguous buffer with separate indices for reading and writing.
 ///
 ///  Elements are copied in to and out from the buffer.
@@ -10,7 +17,7 @@
 ///
 ///  When the head index is equal to the tail index, the circular buffer is empty.
 ///  When the head index is one less than the tail index, the circular buffer is full.
-pub struct Buffer<T: Copy + Default> {
+pub struct CircBuf<T: Copy + Default> {
     /// The next location in the linear buffer to be written
     head: usize,
     /// The next location in the linear buffer to be read
@@ -19,7 +26,7 @@ pub struct Buffer<T: Copy + Default> {
     buf: Vec<T>,
 }
 
-impl<T: Copy + Default> Buffer<T> {
+impl<T: Copy + Default> CircBuf<T> {
     /// Check if the size of the linear buffer is an integer power of 2
     fn power_of_2(len: usize) {
         if len < 2 {
@@ -73,13 +80,13 @@ impl<T: Copy + Default> Buffer<T> {
     }
 
     /// Initialise a new circular buffer
-    pub fn new(l: usize) -> Buffer<T> {
-        Buffer::<T>::power_of_2(l);
+    pub fn new(l: usize) -> CircBuf<T> {
+        CircBuf::<T>::power_of_2(l);
         let mut vec: Vec<T> = Vec::new();
         for _ in 0..l {
             vec.push(Default::default());
         }
-        Buffer { head: 0, tail: 0, buf: vec }
+        CircBuf { head: 0, tail: 0, buf: vec }
     }
 
     /// Get the head index

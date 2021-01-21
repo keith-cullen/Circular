@@ -1,6 +1,6 @@
 [package]
 name = "circular"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["Keith Cullen <keithcullen77@gmail.com>"]
 edition = "2018"
 description = "Queue implemented using a contiguous buffer with separate indices for reading and writing."

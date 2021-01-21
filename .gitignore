@@ -1,1 +1,5 @@
-target/
+Rust/target/
+C++/Copying/testCircBuf
+C++/Copying/*.o
+C++/Moving/testCircBuf
+C++/Moving/*.o
