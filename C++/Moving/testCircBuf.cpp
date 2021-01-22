@@ -8,6 +8,7 @@
 #include "CircBuf.h"
 #include <gtest/gtest.h>
 #include <array>
+#include <thread>
 #include <utility>
 
 using namespace Circular::Moving;
@@ -603,6 +604,50 @@ void testWriteFunc(testWriteData* data)
     }
 }
 
+struct TestMultithreadedData
+{
+    std::size_t numIter;
+    const Elem elem[maxNumIter];
+    std::size_t num[maxNumIter];
+};
+
+TestMultithreadedData testMultithreadedData =
+{
+    .numIter = 2,
+    .elem = {1, 2, 0, 0, 0, 0, 0, 0},
+    .num = {1, 1, 0, 0, 0, 0, 0, 0}
+};
+
+void testMultithreadedFunc(TestMultithreadedData* data)
+{
+    CircBuf<Elem, circBufLen> cb;
+    std::size_t num = 0;
+    std::size_t i = 0;
+    Elem val = 0;
+
+    for (i = 0; i < data->numIter; i++)
+    {
+        val = data->elem[i];
+        num = cb.push(std::move(val));
+        ASSERT_EQ(num, data->num[i]);
+    }
+    std::thread t([&cb, data]()
+                    {
+                        std::size_t num = 0;
+                        std::size_t i = 0;
+                        Elem val = 0;
+
+                        for (i = 0; i < data->numIter + 1; i++)
+                        {
+                            val = 0;
+                            num = cb.pop(std::move(val));
+                            ASSERT_EQ(num, data->num[i]);
+                            ASSERT_EQ(val.i, data->elem[i].i);
+                        }
+                    });
+    t.join();
+}
+
 TEST(testCircBuf, constructor) {testConstructorFunc(&testConstructorData);}
 TEST(testCircBuf, assignment) {testAssignmentFunc(&testAssignmentData);}
 TEST(testCircBuf, space) {testSpaceFunc(&testSpaceData);}
@@ -619,6 +664,7 @@ TEST(testCircBuf, writeFromSmallerBuffer) {testWriteFunc(&testWriteFromSmallerBu
 TEST(testCircBuf, writeFromLargerBuffer) {testWriteFunc(&testWriteFromLargerBufferData);}
 TEST(testCircBuf, tailHeadNzWriteFromSmallerBuffer) {testWriteFunc(&testTailHeadNzWriteFromSmallerBufferData);}
 TEST(testCircBuf, tailHeadNzWriteFromLargerBuffer) {testWriteFunc(&testTailHeadNzWriteFromLargerBufferData);}
+TEST(testCircBuf, multithreaded) {testMultithreadedFunc(&testMultithreadedData);}
 
 int main(int argc, char** argv)
 {
