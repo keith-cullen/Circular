@@ -23,7 +23,7 @@
 template<typename T, std::size_t N>
 std::ostream& operator<<(std::ostream& ostr, CircBuf<T, N>& cb)
 {
-    std::size_t i = cb._tail;
+    std::size_t i{cb._tail};
 
     ostr << "{";
     while (i != cb._head)
@@ -39,10 +39,10 @@ std::ostream& operator<<(std::ostream& ostr, CircBuf<T, N>& cb)
 }
 
 template<typename T, std::size_t N>
-CircBuf<T, N>::CircBuf(const CircBuf& cb) : _head(cb._head), _tail(cb._tail), _buf(cb._buf) {}
+CircBuf<T, N>::CircBuf(const CircBuf& cb) : _head{cb._head}, _tail{cb._tail}, _buf{cb._buf} {}
 
 template<typename T, std::size_t N>
-CircBuf<T, N>::CircBuf(CircBuf&& cb) : _head(0), _tail(0), _buf()
+CircBuf<T, N>::CircBuf(CircBuf&& cb) : _head{0}, _tail{0}, _buf{}
 {
     std::swap(_head, cb._head);
     std::swap(_tail, cb._tail);
@@ -112,8 +112,8 @@ std::array<T, N>& CircBuf<T, N>::buf()
 template<typename T, std::size_t N>
 std::size_t CircBuf<T, N>::countToEnd(std::size_t tail) const
 {
-    std::size_t countEndLinearBuf = N - tail;
-    std::size_t countEndCircBuf = (_head + countEndLinearBuf) & (N - 1);
+    std::size_t countEndLinearBuf{N - tail};
+    std::size_t countEndCircBuf{(_head + countEndLinearBuf) & (N - 1)};
     return countEndCircBuf < countEndLinearBuf ? countEndCircBuf : countEndLinearBuf;
 }
 
@@ -130,8 +130,8 @@ std::size_t CircBuf<T, N>::countToEnd() const
 template<typename T, std::size_t N>
 std::size_t CircBuf<T, N>::spaceToEnd() const
 {
-    std::size_t spaceEndLinearBuf = N - _head;
-    std::size_t spaceEndCircBuf = (_tail + spaceEndLinearBuf - 1) & (N - 1);
+    std::size_t spaceEndLinearBuf{N - _head};
+    std::size_t spaceEndCircBuf{(_tail + spaceEndLinearBuf - 1) & (N - 1)};
     return spaceEndLinearBuf < spaceEndCircBuf ? spaceEndLinearBuf : spaceEndCircBuf;
 }
 
@@ -179,16 +179,19 @@ std::size_t CircBuf<T, N>::push(const T& val)
 template<typename T, std::size_t N>
 std::size_t CircBuf<T, N>::read(T* buf, std::size_t len)
 {
-    std::size_t num = 0;
-    std::size_t ret = 0;
+    std::size_t ret{0};
 
     while (1)
     {
-        num = countToEnd();
+        std::size_t num{countToEnd()};
         if (len < num)
+        {
             num = len;
+        }
         if (num <= 0)
+        {
             break;
+        }
         std::copy(_buf.begin() + _tail, _buf.begin() + _tail + num, buf);
         _tail = (_tail + num) & (N - 1);
         buf += num;
@@ -202,16 +205,19 @@ std::size_t CircBuf<T, N>::read(T* buf, std::size_t len)
 template<typename T, std::size_t N>
 std::size_t CircBuf<T, N>::write(const T* buf, std::size_t len)
 {
-    std::size_t num = 0;
-    std::size_t ret = 0;
+    std::size_t ret{0};
 
     while (1)
     {
-        num = spaceToEnd();
+        std::size_t num{spaceToEnd()};
         if (len < num)
+        {
             num = len;
+        }
         if (num <= 0)
+        {
             break;
+        }
         std::copy(buf, buf + num, _buf.begin() + _head);
         _head = (_head + num) & (N - 1);
         buf += num;
@@ -227,17 +233,20 @@ std::size_t CircBuf<T, N>::write(const T* buf, std::size_t len)
 template<typename T, std::size_t N>
 std::size_t CircBuf<T, N>::peek(T* buf, std::size_t len)
 {
-    std::size_t tail = _tail;
-    std::size_t num = 0;
-    std::size_t ret = 0;
+    std::size_t tail{_tail};
+    std::size_t ret{0};
 
     while (1)
     {
-        num = countToEnd(tail);
+        std::size_t num{countToEnd(tail)};
         if (len < num)
+        {
             num = len;
+        }
         if (num <= 0)
+        {
             break;
+        }
         std::copy(_buf.begin() + tail, _buf.begin() + tail + num, buf);
         tail = (tail + num) & (N - 1);
         buf += num;
@@ -251,16 +260,19 @@ std::size_t CircBuf<T, N>::peek(T* buf, std::size_t len)
 template<typename T, std::size_t N>
 std::size_t CircBuf<T, N>::consume(std::size_t len)
 {
-    std::size_t num = 0;
-    std::size_t ret = 0;
+    std::size_t ret{0};
 
     while (1)
     {
-        num = countToEnd();
+        std::size_t num{countToEnd()};
         if (len < num)
+        {
             num = len;
+        }
         if (num <= 0)
+        {
             break;
+        }
         _tail = (_tail + num) & (N - 1);
         len -= num;
         ret += num;

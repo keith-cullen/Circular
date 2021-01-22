@@ -23,7 +23,7 @@
 template<typename T, std::size_t N>
 std::ostream& operator<<(std::ostream& ostr, CircBuf<T, N>& cb)
 {
-    std::size_t i = cb._tail;
+    std::size_t i{cb._tail};
 
     ostr << "{";
     while (i != cb._head)
@@ -97,8 +97,8 @@ std::array<T, N>& CircBuf<T, N>::buf()
 template<typename T, std::size_t N>
 std::size_t CircBuf<T, N>::countToEnd() const
 {
-    std::size_t countEndLinearBuf = N - _tail;
-    std::size_t countEndCircBuf = (_head + countEndLinearBuf) & (N - 1);
+    std::size_t countEndLinearBuf{N - _tail};
+    std::size_t countEndCircBuf{(_head + countEndLinearBuf) & (N - 1)};
     return countEndCircBuf < countEndLinearBuf ? countEndCircBuf : countEndLinearBuf;
 }
 
@@ -107,8 +107,8 @@ std::size_t CircBuf<T, N>::countToEnd() const
 template<typename T, std::size_t N>
 std::size_t CircBuf<T, N>::spaceToEnd() const
 {
-    std::size_t spaceEndLinearBuf = N - _head;
-    std::size_t spaceEndCircBuf = (_tail + spaceEndLinearBuf - 1) & (N - 1);
+    std::size_t spaceEndLinearBuf{N - _head};
+    std::size_t spaceEndCircBuf{(_tail + spaceEndLinearBuf - 1) & (N - 1)};
     return spaceEndLinearBuf < spaceEndCircBuf ? spaceEndLinearBuf : spaceEndCircBuf;
 }
 
@@ -156,12 +156,11 @@ std::size_t CircBuf<T, N>::push(T&& val)
 template<typename T, std::size_t N>
 std::size_t CircBuf<T, N>::read(T* buf, std::size_t len)
 {
-    std::size_t num = 0;
-    std::size_t ret = 0;
+    std::size_t ret{0};
 
     while (1)
     {
-        num = countToEnd();
+        std::size_t num{countToEnd()};
         if (len < num)
         {
             num = len;
@@ -185,12 +184,11 @@ std::size_t CircBuf<T, N>::read(T* buf, std::size_t len)
 template<typename T, std::size_t N>
 std::size_t CircBuf<T, N>::write(T* buf, std::size_t len)
 {
-    std::size_t num = 0;
-    std::size_t ret = 0;
+    std::size_t ret{0};
 
     while (1)
     {
-        num = spaceToEnd();
+        std::size_t num{spaceToEnd()};
         if (len < num)
         {
             num = len;
