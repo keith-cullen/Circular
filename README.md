@@ -48,3 +48,11 @@ $ cd C++/Chan
 $ make
 
 $ testChan
+
+Go github.com/keith-cullen/circular/circbuf
+-------------------------------------------
+Suitable for copying sequences of bytes
+
+$ cd Go/src/github.com/keith-cullen/circular/circbuf
+
+$ go test

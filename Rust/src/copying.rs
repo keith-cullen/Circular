@@ -5,18 +5,18 @@
 // |                          |
 // +--------------------------+
 
-///  A queue implemented using a contiguous buffer with separate indices for reading and writing.
+/// A queue implemented using a contiguous buffer with separate indices for reading and writing.
 ///
-///  Elements are copied in to and out from the buffer.
-//
-///  The head index is the next location to be written. It is incremented when items
-///  are added and wraps to zero when it reaches the end of the linear buffer.
+/// Elements are copied in to and out of the buffer.
 ///
-///  The tail index is the next location to be read. It is incremented when items
-///  are removed and wraps to zero when it reaches the end of the linear buffer.
+/// The head index is the next location to be written. It is incremented when items
+/// are added and wraps to zero when it reaches the end of the linear buffer.
 ///
-///  When the head index is equal to the tail index, the circular buffer is empty.
-///  When the head index is one less than the tail index, the circular buffer is full.
+/// The tail index is the next location to be read. It is incremented when items
+/// are removed and wraps to zero when it reaches the end of the linear buffer.
+///
+/// When the head index is equal to the tail index, the circular buffer is empty.
+/// When the head index is one less than the tail index, the circular buffer is full.
 pub struct CircBuf<T: Copy + Default> {
     /// The next location in the linear buffer to be written
     head: usize,
