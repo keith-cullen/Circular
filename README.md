@@ -38,3 +38,13 @@ $ cd C++/copying
 $ make
 
 $ testCircBuf
+
+C++ Circular::Chan
+------------------
+Suitable for moving single elements using blocking operations
+
+$ cd C++/Chan
+
+$ make
+
+$ testChan
