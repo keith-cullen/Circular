@@ -1,7 +1,7 @@
-circular
+Circular
 ========
 
-Circular buffers implemented in Rust and C++ with copy and move semantics
+Circular buffers implemented in Rust, Go, C++ and C with copy and move semantics
 
 Rust circular::moving::CircBuf
 ------------------------------
@@ -27,7 +27,7 @@ $ cd C++/moving
 
 $ make
 
-$ testCircBuf
+$ ./testCircBuf
 
 C++ Circular::Copying::CircBuf
 ------------------------------
@@ -37,7 +37,7 @@ $ cd C++/copying
 
 $ make
 
-$ testCircBuf
+$ ./testCircBuf
 
 C++ Circular::Chan
 ------------------
@@ -47,7 +47,7 @@ $ cd C++/Chan
 
 $ make
 
-$ testChan
+$ ./testChan
 
 Go github.com/keith-cullen/circular/circbuf
 -------------------------------------------
@@ -56,3 +56,13 @@ Suitable for copying sequences of bytes
 $ cd Go/src/github.com/keith-cullen/circular/circbuf
 
 $ go test
+
+C circ_buf
+----------
+Suitable for copying sequences of bytes
+
+$ cd C
+
+$ make
+
+$ ./test_circ_buf

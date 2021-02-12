@@ -3,3 +3,5 @@ C++/Copying/testCircBuf
 C++/Copying/*.o
 C++/Moving/testCircBuf
 C++/Moving/*.o
+C/test_circ_buf
+C/*.o

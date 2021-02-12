@@ -42,7 +42,7 @@ template<typename T, std::size_t N>
 CircBuf<T, N>::CircBuf(const CircBuf& cb) : _head{cb._head}, _tail{cb._tail}, _buf{cb._buf} {}
 
 template<typename T, std::size_t N>
-CircBuf<T, N>::CircBuf(CircBuf&& cb) : _head{0}, _tail{0}, _buf{}
+CircBuf<T, N>::CircBuf(CircBuf&& cb)
 {
     std::swap(_head, cb._head);
     std::swap(_tail, cb._tail);
