@@ -218,33 +218,24 @@ TestSpaceData testSpaceData
 void testSpaceFunc(TestSpaceData* data)
 {
     CircBuf<Elem, circBufLen> cb;
+    std::size_t n{0};
 
-    for (std::size_t i{0}; i < data->numWrite.at(0); i++)
+    for (std::size_t j{0}; j < data->numWrite.size(); j++)
     {
-        Elem val{Elem(i)};
-        cb.write(&val, 1);
-        ASSERT_EQ(cb.space(), circBufLen - i - 2);
-    }
-    std::size_t n{cb.space()};
-    for (std::size_t i{0}; i < data->numRead.at(0); i++)
-    {
-        Elem val{0};
-        cb.read(&val, 1);
-        ASSERT_EQ(cb.space(), n + i + 1);
-    }
-    n = cb.space();
-    for (std::size_t i{0}; i < data->numWrite.at(1); i++)
-    {
-        Elem val{Elem(i)};
-        cb.write(&val, 1);
-        ASSERT_EQ(cb.space(), n - i - 1);
-    }
-    n = cb.space();
-    for (std::size_t i{0}; i < data->numRead.at(1); i++)
-    {
-        Elem val{0};
-        cb.read(&val, 1);
-        ASSERT_EQ(cb.space(), n + i + 1);
+        n = cb.space();
+        for (std::size_t i{0}; i < data->numWrite.at(j); i++)
+        {
+            Elem val{Elem(i)};
+            cb.write(&val, 1);
+            ASSERT_EQ(cb.space(), n - i - 1);
+        }
+        n = cb.space();
+        for (std::size_t i{0}; i < data->numRead.at(j); i++)
+        {
+            Elem val{0};
+            cb.read(&val, 1);
+            ASSERT_EQ(cb.space(), n + i + 1);
+        }
     }
 }
 
@@ -263,33 +254,24 @@ TestCountData testCountData
 void testCountFunc(TestCountData* data)
 {
     CircBuf<Elem, circBufLen> cb;
+    std::size_t n{0};
 
-    for (std::size_t i{0}; i < data->numWrite.at(0); i++)
+    for (std::size_t j{0}; j < data->numWrite.size(); j++)
     {
-        Elem val{Elem(i)};
-        cb.write(&val, 1);
-        ASSERT_EQ(cb.count(), i + 1);
-    }
-    std::size_t n{cb.count()};
-    for (std::size_t i{0}; i < data->numRead.at(0); i++)
-    {
-        Elem val{0};
-        cb.read(&val, 1);
-        ASSERT_EQ(cb.count(), n - i - 1);
-    }
-    n = cb.count();
-    for (std::size_t i{0}; i < data->numWrite.at(1); i++)
-    {
-        Elem val{Elem(i)};
-        cb.write(&val, 1);
-        ASSERT_EQ(cb.count(), n + i + 1);
-    }
-    n = cb.count();
-    for (std::size_t i{0}; i < data->numRead.at(1); i++)
-    {
-        Elem val{0};
-        cb.read(&val, 1);
-        ASSERT_EQ(cb.count(), n - i - 1);
+        n = cb.count();
+        for (std::size_t i{0}; i < data->numWrite.at(j); i++)
+        {
+            Elem val{Elem(i)};
+            cb.write(&val, 1);
+            ASSERT_EQ(cb.count(), n + i + 1);
+        }
+        n = cb.count();
+        for (std::size_t i{0}; i < data->numRead.at(j); i++)
+        {
+            Elem val{0};
+            cb.read(&val, 1);
+            ASSERT_EQ(cb.count(), n - i - 1);
+        }
     }
 }
 
@@ -299,7 +281,6 @@ struct TestPopData
     std::size_t strLen;
     std::size_t start;
     std::size_t end;
-    std::size_t spaceToEnd;
     std::size_t numIter;
     std::array<std::size_t, maxNumIter> expectedNum;
     std::array<const Elem, maxNumIter> expected;
@@ -311,7 +292,6 @@ TestPopData testPopData
     .strLen{7},
     .start{0},
     .end{7},
-    .spaceToEnd{circBufLen - 1},
     .numIter{maxNumIter},
     .expectedNum{1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0},
     .expected{1, 2, 3, 4, 5, 6, 7, 0, 0, 0, 0, 0}
@@ -323,7 +303,6 @@ TestPopData testTailGtHeadPopData
     .strLen{7},
     .start{5},
     .end{4},
-    .spaceToEnd{circBufLen - 5},
     .numIter{maxNumIter},
     .expectedNum{1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0},
     .expected{1, 2, 3, 4, 5, 6, 7, 0, 0, 0, 0, 0}
@@ -360,6 +339,7 @@ struct TestPushData
     std::size_t strLen;
     std::size_t start;
     std::size_t end;
+    std::size_t numIter;
     std::array<std::size_t, maxNumIter> expectedNum;
     std::array<std::array<const Elem, circBufLen>, maxNumIter> expected;
 };
@@ -370,6 +350,7 @@ TestPushData testPushData
     .strLen{maxNumIter},
     .start{0},
     .end{0},
+    .numIter{maxNumIter},
     .expectedNum{1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0},
     .expected{{{1, 0, 0, 0, 0, 0, 0, 0},
                {1, 2, 0, 0, 0, 0, 0, 0},
@@ -391,6 +372,7 @@ TestPushData testTailHeadNzData
     .strLen{maxNumIter},
     .start{6},
     .end{6},
+    .numIter{maxNumIter},
     .expectedNum{1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0},
     .expected{{{0, 0, 0, 0, 0, 0, 1, 0},
                {0, 0, 0, 0, 0, 0, 1, 2},
@@ -412,7 +394,7 @@ void testPushFunc(TestPushData* data)
 
     circBuf.head(data->end);
     circBuf.tail(data->start);
-    for (std::size_t i{0}; i < data->strLen; i++)
+    for (std::size_t i{0}; i < data->numIter; i++)
     {
         Elem val{data->str.at(i)};
         std::size_t num{circBuf.push(val)};
@@ -432,7 +414,6 @@ struct TestReadData
     std::size_t start;
     std::size_t end;
     std::size_t len;
-    std::size_t spaceToEnd;
     std::size_t numIter;
     std::array<std::size_t, maxNumIter> expectedNum;
     std::array<std::array<const Elem, 2 * circBufLen>, maxNumIter> expected;
@@ -445,7 +426,6 @@ TestReadData testReadIntoSmallerBufferData
     .start{0},
     .end{7},
     .len{6},
-    .spaceToEnd{circBufLen - 1},
     .numIter{3},
     .expectedNum{6, 1, 0, 0, 0, 0, 0, 0},
     .expected{{{1, 2, 3, 4, 5, 6}, {7}, {0}, {0}, {0}, {0}, {0}, {0}}}
@@ -458,7 +438,6 @@ TestReadData testReadIntoLargerBufferData
     .start{0},
     .end{7},
     .len{12},
-    .spaceToEnd{circBufLen - 1},
     .numIter{2},
     .expectedNum{7, 0, 0, 0, 0, 0, 0, 0},
     .expected{{{1, 2, 3, 4, 5, 6, 7}, {0}, {0}, {0}, {0}, {0}, {0}, {0}}}
@@ -471,7 +450,6 @@ TestReadData testTailGtHeadReadIntoSmallerBufferData
     .start{5},
     .end{4},
     .len{6},
-    .spaceToEnd{circBufLen - 5},
     .numIter{3},
     .expectedNum{6, 1, 0, 0, 0, 0, 0, 0},
     .expected{{{1, 2, 3, 4, 5, 6}, {7}, {0}, {0}, {0}, {0}, {0}, {0}}}
@@ -484,7 +462,6 @@ TestReadData testTailGtHeadReadIntoLargerBufferData
     .start{5},
     .end{4},
     .len{12},
-    .spaceToEnd{circBufLen - 5},
     .numIter{2},
     .expectedNum{7, 0, 0, 0, 0, 0, 0, 0},
     .expected{{{1, 2, 3, 4, 5, 6, 7}, {0}, {0}, {0}, {0}, {0}, {0}, {0}}}
@@ -630,7 +607,6 @@ struct TestPeekConsumeData
     std::size_t start;
     std::size_t end;
     std::size_t len;
-    std::size_t spaceToEnd;
     std::size_t numIter;
     std::array<std::size_t, maxNumIter> expectedNum;
     std::array<std::array<const Elem, 2 * circBufLen>, maxNumIter> expected;
@@ -643,7 +619,6 @@ TestPeekConsumeData testPeekConsumeIntoSmallerBufferData
     .start{0},
     .end{7},
     .len{6},
-    .spaceToEnd{7},
     .numIter{3},
     .expectedNum{6, 1, 0, 0, 0, 0, 0, 0},
     .expected{{{1, 2, 3, 4, 5, 6}, {7}, {0}, {0}, {0}, {0}, {0}, {0}}}
@@ -656,7 +631,6 @@ TestPeekConsumeData testPeekConsumeIntoLargerBufferData
     .start{0},
     .end{7},
     .len{12},
-    .spaceToEnd{7},
     .numIter{2},
     .expectedNum{7, 0, 0, 0, 0, 0, 0, 0},
     .expected{{{1, 2, 3, 4, 5, 6, 7}, {0}, {0}, {0}, {0}, {0}, {0}, {0}}}
@@ -669,7 +643,6 @@ TestPeekConsumeData testTailGtHeadPeekConsumeIntoSmallerBufferData
     .start{5},
     .end{4},
     .len{6},
-    .spaceToEnd{3},
     .numIter{3},
     .expectedNum{6, 1, 0, 0, 0, 0, 0, 0},
     .expected{{{1, 2, 3, 4, 5, 6}, {7}, {0}, {0}, {0}, {0}, {0}, {0}}}
@@ -682,7 +655,6 @@ TestPeekConsumeData testTailGtHeadPeekConsumeIntoLargerBufferData
     .start{5},
     .end{4},
     .len{12},
-    .spaceToEnd{3},
     .numIter{2},
     .expectedNum{7,  0, 0, 0, 0, 0, 0, 0},
     .expected{{{1, 2, 3, 4, 5, 6, 7}, {0}, {0}, {0}, {0}, {0}, {0}, {0}}}

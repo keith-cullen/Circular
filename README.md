@@ -66,3 +66,11 @@ $ cd C
 $ make
 
 $ ./test_circ_buf
+
+C# Circular.CircBuf
+-------------------
+Suitable for copying single elements or sequences of elements
+
+$ cd C#
+
+$ dotnet run
