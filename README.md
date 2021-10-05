@@ -49,11 +49,11 @@ $ make
 
 $ ./testChan
 
-Go github.com/keith-cullen/circular/circbuf
--------------------------------------------
+Go github.com/keith-cullen/Circular/Go/circular/circbuf
+-------------------------------------------------------
 Suitable for copying sequences of bytes
 
-$ cd Go/src/github.com/keith-cullen/circular/circbuf
+$ cd Go/circular/circbuf
 
 $ go test
 
