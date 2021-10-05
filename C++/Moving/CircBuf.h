@@ -27,7 +27,7 @@ class CircBuf
 {
     static constexpr bool power_of_2(std::size_t i) {return (i > 0) && ((i & (i - 1)) == 0);}
     static_assert(power_of_2(N), "N must be an integer power of 2");
-    friend std::ostream &operator<< <T, N>(std::ostream&, CircBuf&);
+    friend std::ostream& operator<< <T, N>(std::ostream&, CircBuf&);
 public:
     CircBuf() = default;
     CircBuf(const CircBuf&) = delete;
@@ -40,7 +40,7 @@ public:
     std::size_t tail() const;
     void tail(std::size_t);
     std::size_t len() const;
-    std::array<T, N> &buf();
+    std::array<T, N>& buf();
     std::size_t countToEnd() const;
     std::size_t spaceToEnd() const;
     std::size_t count() const;

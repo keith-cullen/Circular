@@ -64,7 +64,7 @@ void testConstructorFunc(TestConstructorData* data)
     ASSERT_EQ(cb2.head(), data->head);
     ASSERT_EQ(cb2.tail(), data->tail);
 
-    // check that cb1 has remained the same
+    // check that cb1 has not remained the same
     std::array<Elem, circBufLen>& p3{cb1.buf()};
     for (std::size_t i{0}; i < circBufLen; i++)
     {
